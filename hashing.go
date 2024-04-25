@@ -14,7 +14,8 @@ type Config struct {
 	Driver Driver
 }
 
-// New ...
+// New creates and returns the hashing driver
+// if no driver is provided, it defaults to argon2id
 func New(config ...Config) Driver {
 	var cfg Config
 	if len(config) > 0 {

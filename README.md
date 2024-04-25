@@ -6,31 +6,28 @@ A hashing library built for Fiber. Supports both argon2id and bcrypt, uses argon
 package main
 
 import (
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v3"
 	"github.com/thomasvvugt/fiber-hashing"
 )
 
 func main() {
-	app := fiber.New(&fiber.Settings{
-		CaseSensitive: true,
-	})
+	app := fiber.New()
 
 	hasher := hashing.New()
 
-	app.Get("/", func(c *fiber.Ctx) {
-		hash, _ := hasher.CreateHash("Password")
-		c.Send(hash)
+	app.Get("/", func(c fiber.Ctx) error {
+		hash, _ := hasher.CreateHash("ourlittlesecret")
+		return c.SendString(hash)
 	})
 
-	app.Get("/match/*", func(c *fiber.Ctx) {
-		match, _ := hasher.MatchHash("Password", c.Params("*"))
+	app.Get("/match/*", func(c fiber.Ctx) error {
+		match, _ := hasher.MatchHash("ourlittlesecret", c.Params("*"))
 		if match {
-			c.Send("Matches!")
-			return
+			return c.SendString("Matches!")
 		}
-		c.Send("Does not match :c")
+		return c.SendString("Does not match :c")
 	})
 
-	app.Listen(3000)
+	app.Listen(":3000")
 }
 ```
